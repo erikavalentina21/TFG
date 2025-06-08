@@ -7,12 +7,7 @@ scrape_configs:
     scrape_interval: 5s
 
     static_configs:
-      - targets: ['localhost:9100']  # Endpoint de node_exporter
-
-  - job_name: 'apache_exporter'
-    scrape_interval: 5s
-    static_configs:
-      - targets: ['192.168.49.2:31524']  # Endpoint de apache_exporter
+      - targets: ['localhost:9100'] 
 
   - job_name: wordpress_exporter
     honor_timestamps: true
