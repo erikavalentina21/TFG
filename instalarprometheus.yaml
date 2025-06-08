@@ -1,0 +1,136 @@
+- name: Configuración de Prometheus
+  become: true
+  become_method: sudo
+  hosts: localhost
+
+  tasks:
+  - name: Crear usuario prometheus
+    user:
+      name: prometheus
+      shell: /bin/false
+      createhome: no
+
+  - name: Crear directorios de Prometheus
+    file:
+      path: "{{ item }}"
+      state: directory
+      owner: prometheus
+      group: prometheus
+    with_items:
+      - /etc/prometheus
+      - /var/lib/prometheus
+
+  - name: Descargar Prometheus directamente en `/usr/local/bin`
+    get_url:
+      url: https://github.com/prometheus/prometheus/releases/download/v2.43.0/prometheus-2.43.0.linux-amd64.tar.gz
+      dest: /usr/local/bin/prometheus.tar.gz
+
+  - name: Extraer Prometheus en `/usr/local/bin`
+    unarchive:
+      src: /usr/local/bin/prometheus.tar.gz
+      dest: /usr/local/bin
+      remote_src: yes
+      extra_opts:
+      - --strip-components=1
+
+
+  - name: Eliminar archivo comprimido
+    file:
+      path: /usr/local/bin/prometheus.tar.gz
+      state: absent
+
+  - name: Copiar archivo de configuración
+    copy:
+      src: /home/usuario/proyecto/prometheus.yaml
+      dest: /etc/prometheus/prometheus.yaml
+      owner: prometheus
+      group: prometheus
+      remote_src: yes
+
+  - name: Crear archivo de servicio systemd para Prometheus
+    copy:
+      dest: /etc/systemd/system/prometheus.service
+      content: |
+        [Unit]
+        Description=Prometheus
+        Wants=network-online.target
+        After=network-online.target
+
+        [Service]
+        User=prometheus
+        Group=prometheus
+        Type=simple
+        ExecStart=/usr/local/bin/prometheus \
+          --config.file /etc/prometheus/prometheus.yaml \
+          --storage.tsdb.path /var/lib/prometheus/ \
+          --web.console.templates=/etc/prometheus/consoles \
+          --web.console.libraries=/etc/prometheus/console_libraries
+
+        [Install]
+        WantedBy=multi-user.target
+
+  - name: Recargar systemd
+    systemd:
+      daemon_reload: yes
+
+  - name: Iniciar servicio Prometheus
+    systemd:
+      name: prometheus
+      state: started
+      enabled: yes
+
+  - name: Crear usuario `node_exporter`
+    user:
+      name: node_exporter
+      shell: /bin/false
+      createhome: no
+    become: yes
+
+  - name: Descargar y extraer `node_exporter`
+    get_url:
+      url: https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+      dest: /usr/local/bin/node_exporter.tar.gz
+    become: yes
+
+  - name: Extraer `node_exporter` en `/usr/local/bin`
+    unarchive:
+      src: /usr/local/bin/node_exporter.tar.gz
+      dest: /usr/local/bin
+      remote_src: yes
+      extra_opts:
+      - --strip-components=1
+    become: yes
+
+  - name: Eliminar archivo comprimido de `node_exporter`
+    file:
+      path: /usr/local/bin/node_exporter.tar.gz
+      state: absent
+    become: yes
+
+  - name: Crear archivo de servicio `node_exporter`
+    copy:
+      dest: /etc/systemd/system/node_exporter.service
+      content: |
+        [Unit]
+        Description=Node Exporter
+        Wants=network-online.target
+        After=network-online.target
+
+        [Service]
+        User=node_exporter
+        Group=node_exporter
+        Type=simple
+        ExecStart=/usr/local/bin/node_exporter
+
+        [Install]
+        WantedBy=multi-user.target
+    become: yes
+
+  - name: Arrancar y habilitar `node_exporter`
+    service:
+      name: node_exporter
+      state: started
+      enabled: yes
+
+
+

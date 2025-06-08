@@ -1,0 +1,9 @@
+resources:
+  - mysqlsecret.yaml
+  - mysqlvolume.yaml
+  - mysqldeployment.yaml
+  - mysqlservice.yaml
+  - wordpressvolume.yaml
+  - wordpressdeployment.yaml
+  - wordpressexporter.yaml
+  - wordpressservice.yaml

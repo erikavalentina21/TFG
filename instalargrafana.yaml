@@ -1,0 +1,47 @@
+---
+- name: Instalación de grafana y configuracion de exporter
+  hosts: localhost
+  become: yes
+  become_method: sudo
+
+  tasks:
+    - name: Instalar paquetes necesarios para Grafana
+      apt:
+        name:
+          - apt-transport-https
+          - software-properties-common
+          - wget
+        state: present
+      become: yes
+
+    - name: Importar clave GPG de Grafana
+      shell: |
+        mkdir -p /etc/apt/keyrings/
+        wget -q -O - https://apt.grafana.com/gpg.key | gpg --dearmor > /etc/apt/keyrings/grafana.gpg
+      become: yes
+
+    - name: Agregar repositorio de Grafana
+      apt_repository:
+        repo: deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main
+        state: present
+      become: yes
+
+    - name: Actualizar cache de apt
+      apt:
+        update_cache: yes
+      become: yes
+
+    - name: Instalar Grafana
+      apt:
+        name: grafana
+        state: present
+      become: yes
+
+    - name: Habilitar y arrancar Grafana
+      service:
+        name: grafana-server
+        state: started
+        enabled: yes
+      become: yes
+
+
