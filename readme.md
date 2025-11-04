@@ -1,7 +1,8 @@
 # 🧩 WordPress + MySQL + Kubernetes + Ansible + Prometheus + Grafana
 
-Proyecto técnico desarrollado por **Erika Alessio** como laboratorio práctico de automatización y monitorización.  
+Aquí os muestro mi proyecto final del Grado Superior de ASIR, es laboratorio práctico de automatización y monitorización.  
 El objetivo es desplegar una infraestructura completa con **Kubernetes (Minikube)**, **Ansible** y un stack de observabilidad basado en **Prometheus y Grafana**.
+Podéis ver el proyecto desarrollado en el fichero PROYECTO ERIKA ALESSIO.pdf.
 
 
 ## 🧠 Descripción
