@@ -3,7 +3,6 @@
 Proyecto técnico desarrollado por **Erika Alessio** como laboratorio práctico de automatización y monitorización.  
 El objetivo es desplegar una infraestructura completa con **Kubernetes (Minikube)**, **Ansible** y un stack de observabilidad basado en **Prometheus y Grafana**.
 
----
 
 ## 🧠 Descripción
 
@@ -15,8 +14,6 @@ Este proyecto integra varios componentes clave de infraestructura moderna:
 - Visualización y dashboards personalizables con **Grafana**.  
 - Gestión de volúmenes persistentes, secretos y servicios mediante YAML.
 
-
----
 
 ## ⚙️ Tecnologías utilizadas
 
